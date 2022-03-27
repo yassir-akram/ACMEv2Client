@@ -22,14 +22,12 @@ def main(argv):
   
   args = parser.parse_args(argv)
   
-  """
   Handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=args.http01_server_root)
   http01_server = http.server.HTTPServer(("", 8000), Handler)
   http01_server_thread = Thread(target=http01_server.serve_forever)
   http01_server.serve_forever()
   http01_server_thread.setDaemon(True)
   http01_server_thread.start() 
-  """
   
   client = Acmev2Client(acme_server_dir_url=args.acme_server_dir, 
                         server_root_dir=args.http01_server_root, 
