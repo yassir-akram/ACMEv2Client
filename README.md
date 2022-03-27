@@ -1,4 +1,4 @@
 
 # Example
 
-python ACMEv2_certifier.py --domain your.domain.com
+python ACMEv2Certifier.py --domain your.domain.com

@@ -2,6 +2,7 @@
 
 import argparse
 import functools
+import pathlib
 from threading import Thread
 import http.server
 import ssl
@@ -16,16 +17,19 @@ def main(argv):
   parser.add_argument("--acme_server_dir", default="https://acme-v02.api.letsencrypt.org/directory", help="ACME server url")
   parser.add_argument("--account_key", required=False, help="path to the key used to communicate with the ACME server")
   parser.add_argument("--csr", required=False, help="path to your Certificate Signing Request")
-  parser.add_argument("--http01_server_root", required=True, help="root of the http01 server")
+  parser.add_argument("--http01_server_root", default="./htt01_server/", help="root of the http01 server")
   parser.add_argument("--no-check", default=True, action="store_false", help="check or not that the challenge is effective before validating a challenge")
   parser.add_argument("--domain", action="append", required=True, help="domain to validate")
   
   args = parser.parse_args(argv)
   
+  pathlib.Path(args.http01_server_root).mkdir(parents=True, exist_ok=True)
+  
+
   Handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=args.http01_server_root)
   http01_server = http.server.HTTPServer(("", 8000), Handler)
   http01_server_thread = Thread(target=http01_server.serve_forever)
-  http01_server.serve_forever()
+  # http01_server.serve_forever()
   http01_server_thread.setDaemon(True)
   http01_server_thread.start() 
   
@@ -39,14 +43,14 @@ def main(argv):
     f.write(crt)
   http01_server.shutdown()
   """
-  https_server= http.server.HTTPServer(("", 8001), http.server.BaseHTTPRequestHandler)
-  https_server= http.server.HTTPServer(("", 8001), Handler)
+  https_server = http.server.HTTPServer(("", 8001), http.server.BaseHTTPRequestHandler)
+  https_server = http.server.HTTPServer(("", 8001), Handler)
   https_server.socket = ssl.wrap_socket(https_server.socket, 
                                         keyfile="server_privatekey.pem", 
                                         certfile="server_cert.pem", 
                                         server_side=True)
   https_server_thread = Thread(target=https_server.serve_forever)
-  https_server.serve_forever()
+  # https_server.serve_forever()
   https_server_thread.setDaemon(True)
   https_server_thread.start()
   """
