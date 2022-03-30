@@ -200,12 +200,12 @@ class Acmev2Client(object):
 
   def __save_private_key_pem(private_key, key_path):
     serialized_private = private_key.private_bytes(
-        encoding=serialization.Encoding.PEM,
-        format=serialization.PrivateFormat.PKCS8,
-        encryption_algorithm=serialization.NoEncryption())
-        #encryption_algorithm=serialization.BestAvailableEncryption(b'testpassword'))
+      encoding=serialization.Encoding.PEM,
+      format=serialization.PrivateFormat.PKCS8,
+      encryption_algorithm=serialization.NoEncryption())
+      #encryption_algorithm=serialization.BestAvailableEncryption(b'testpassword'))
     with open(key_path, "wt") as f:
-        f.write(serialized_private.decode("utf-8"))
+      f.write(serialized_private.decode("utf-8"))
     
 
   @staticmethod
@@ -243,8 +243,11 @@ class Acmev2Client(object):
     certificate_url = order["certificate"]
     resp = s.__post(url=certificate_url)
     assert(resp.status_code == 200)
-    return resp.text
-  
+    s.certificate_pem = resp.text
+    cert_path = os.path.join(output_path, "server_certificate.pem")
+    with open(cert_path, "wt") as f:
+      f.write(s.certificate_pem)
+
   def revoke_certificate(s, crt):
     crt_der = crt.public_bytes(serialization.Encoding.DER)
     resp = s.__post(url=s.directory['revokeCert'], 
@@ -293,5 +296,5 @@ class Acmev2Client(object):
       order = s.__poll(order, order_url, {"ready", "processing"})
       if order["status"] == "invalid": raise Exception("Order rejected!")
     assert(order["status"] == "valid")
-    return s.__download_certificate(order)
+    s.__download_certificate(order)
 
