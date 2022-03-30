@@ -38,16 +38,15 @@ def main(argv):
                         account_key_path=args.account_key, 
                         check=not args.no_check)
     
-  crt = client.register_domains(domains=args.domain, csr_path=args.csr)
-  with open("server_cert.pem", "wt") as f:
-    f.write(crt)
+  client.register_domains(domains=args.domain, csr_path=args.csr)
+  
   http01_server.shutdown()
   """
   https_server = http.server.HTTPServer(("", 8001), http.server.BaseHTTPRequestHandler)
   https_server = http.server.HTTPServer(("", 8001), Handler)
   https_server.socket = ssl.wrap_socket(https_server.socket, 
                                         keyfile="server_privatekey.pem", 
-                                        certfile="server_cert.pem", 
+                                        certfile="server_certificate.pem", 
                                         server_side=True)
   https_server_thread = Thread(target=https_server.serve_forever)
   # https_server.serve_forever()
