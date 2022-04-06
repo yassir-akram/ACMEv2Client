@@ -65,24 +65,7 @@ class Acmev2Client(object):
 
     s.__create_account()
     s.dns_resolver = dns_resolver
-
-  """
-  @staticmethod
-  def __generate_key():
-    return ECC.generate(curve='P-256')
   
-  @staticmethod
-  def __load_key(key_path):
-    with open(key_path, 'rt') as f:
-      return ECC.import_key(f.read())
-
-  def save_key(s, key, folder_path):
-    with open(os.folder.path.join(folder_path, "private_key.pem"), 'wt') as f:
-      f.write(s.key.export_key(format='PEM'))
-    with open(os.folder.path.join(folder_path, "public_key.pem"), 'wt') as f:
-      f.write(s.key.public_key().export_key(format='PEM'))
-  """
-
   @staticmethod
   def b64enc(b):
     return base64.urlsafe_b64encode(b).decode('utf-8').rstrip("=")
