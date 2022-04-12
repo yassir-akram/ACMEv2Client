@@ -222,7 +222,7 @@ class Acmev2Client(object):
     order = resp.json()
     return order
   
-  def __download_certificate(s, order):
+  def __download_certificate(s, order, output_path):
     certificate_url = order["certificate"]
     resp = s.__post(url=certificate_url)
     assert(resp.status_code == 200)
@@ -279,5 +279,5 @@ class Acmev2Client(object):
       order = s.__poll(order, order_url, {"ready", "processing"})
       if order["status"] == "invalid": raise Exception("Order rejected!")
     assert(order["status"] == "valid")
-    s.__download_certificate(order)
+    s.__download_certificate(order, output_path)
 
